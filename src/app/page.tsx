@@ -1,5 +1,8 @@
 'use client';
 
+import { AuthPanel } from '@/components/auth/AuthPanel';
+import { DemoVideoPanel } from '@/components/auth/DemoVideoPanel';
+import { SpaceLoading } from '@/components/ui/SpaceLoading';
 import { useAuthStore } from '@/store/authStore';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
@@ -27,7 +30,7 @@ export default function LandingPage() {
     setVideoEnded(true);
   };
 
-  // Skip video for development if it doesn't exist
+  // Skip video for development
   const skipVideo = () => {
     setVideoEnded(true);
   };
@@ -68,7 +71,7 @@ export default function LandingPage() {
             {/* Skip button for development */}
             <button
               onClick={skipVideo}
-              className="absolute bottom-8 right-8 text-white/50 hover:text-white text-sm"
+              className="absolute bottom-8 right-8 text-white/50 hover:text-white text-sm transition-colors"
             >
               Skip →
             </button>
@@ -82,16 +85,34 @@ export default function LandingPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="relative z-0 min-h-screen flex items-center justify-center p-4"
+          className="relative z-0 min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8"
         >
           {isLoading ? (
-            <div className="text-white">Loading...</div>
+            <SpaceLoading message="Initializing your space journey..." />
           ) : isAuthenticated ? (
-            <div className="text-white">Redirecting to dashboard...</div>
+            <SpaceLoading message="Redirecting to dashboard..." />
           ) : (
-            <div className="text-white text-2xl text-center">
-              <p>Welcome to LearnMore</p>
-              <p className="text-sm text-white/50 mt-2">Auth panels coming in Phase 1</p>
+            <div className="w-full max-w-7xl mx-auto">
+              {/* Auth Panels Container */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+                {/* Left Panel - Auth */}
+                <motion.div
+                  initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.6, ease: 'easeOut', delay: 0.3 }}
+                >
+                  <AuthPanel />
+                </motion.div>
+
+                {/* Right Panel - Demo Video */}
+                <motion.div
+                  initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.6, ease: 'easeOut', delay: 0.5 }}
+                >
+                  <DemoVideoPanel />
+                </motion.div>
+              </div>
             </div>
           )}
         </motion.div>

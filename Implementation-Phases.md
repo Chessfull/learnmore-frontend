@@ -1523,23 +1523,7 @@ Oluşturulan/Güncellenen dosyalar:
 Phase 2 için hazırım. Dashboard sayfasını (stats, roadmap) ekleyeceğiz.
 Phase 1 PROMPT BİTİŞ
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-PHASE 2PROMPT BAŞLANGIÇ
+PHASE 2 PROMPT BAŞLANGIÇ
 Phase 2'yi başlatıyoruz - User Dashboard. Bu, kullanıcının giriş yaptıktan sonra gördüğü ana sayfa.
 Sayfa Yapısı
 Wireframe'deki gibi (Image 3):

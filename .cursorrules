@@ -1,0 +1,91 @@
+# LearnMore Frontend - Cursor Rules
+
+## Project Overview
+This is a space-themed educational platform built with Next.js 15. The frontend connects to a Go backend API.
+
+## Tech Stack
+- Next.js 15 (App Router)
+- TypeScript
+- Tailwind CSS
+- Axios for API calls
+- Zustand for state management
+- Monaco Editor for code editing
+- Framer Motion for animations
+
+## Design Theme
+- Space/cosmic theme with dark backgrounds
+- Color palette: Deep blues (#0a0f1c), purples (#1a0a2e), cyan accents (#00d4ff), green highlights (#00ff88)
+- Glassmorphism effects for cards/panels
+- Subtle star animations in backgrounds
+- Clean, minimal UI with space-inspired elements
+
+## Code Style Guidelines
+- Use TypeScript strict mode
+- Functional components with hooks
+- Custom hooks for reusable logic
+- API calls through centralized axios instance in src/lib/api.ts
+- Tailwind for styling (no CSS modules)
+- Use 'use client' directive only when necessary
+- Keep components modular and reusable
+- ALWAYS check for existing files before creating new ones - update if exists, create if not
+- NEVER create duplicate files in different locations
+
+## File Structure
+src/
+├── app/                    # Next.js App Router pages
+│   ├── (auth)/            # Auth routes (login callback)
+│   ├── (main)/            # Protected routes with navbar/footer
+│   │   ├── dashboard/
+│   │   ├── courses/
+│   │   ├── challenges/
+│   │   ├── leaderboard/
+│   │   └── lesson/[id]/
+│   ├── layout.tsx
+│   └── page.tsx           # Landing page
+├── components/
+│   ├── ui/                # Reusable UI components
+│   ├── layout/            # Navbar, Footer
+│   ├── auth/              # Auth components
+│   ├── dashboard/         # Dashboard components
+│   ├── courses/           # Course components
+│   ├── challenges/        # Challenge components
+│   ├── leaderboard/       # Leaderboard components
+│   └── lesson/            # Lesson components
+├── hooks/                 # Custom React hooks
+├── lib/                   # Utilities, API client
+├── store/                 # Zustand stores
+├── types/                 # TypeScript types
+└── styles/               # Global styles
+
+## API Integration
+- Base URL: http://localhost:8080
+- All API calls go through src/lib/api.ts
+- Handle token refresh automatically
+- Backend project is in ../learnmore-go - check it for endpoint details
+
+## Error Handling & Placeholders
+- ALWAYS implement proper error handling with try-catch
+- If an image/asset is missing, create CSS placeholder and log warning
+- If API returns error, show user-friendly message and log details
+- After completing tasks, report any warnings about missing assets or API issues
+- If backend endpoint doesn't match, check ../learnmore-go and suggest fixes
+
+## Important Patterns
+1. Always handle loading and error states
+2. Use skeleton loaders for better UX
+3. Check for file existence before creating
+4. WebSocket for real-time features with REST fallback
+5. Responsive design (mobile-first)
+
+## Authentication Flow
+- JWT tokens stored in localStorage
+- Refresh token mechanism
+- Protected routes via layout auth check
+- OAuth support (GitHub, Google)
+
+## Naming Conventions
+- Components: PascalCase (UserDashboard.tsx)
+- Hooks: camelCase with 'use' prefix (useAuth.ts)
+- Utils: camelCase (formatDate.ts)
+- Types: PascalCase (User, AuthResponse)
+- API functions: camelCase (getUserProfile)

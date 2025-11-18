@@ -2,7 +2,7 @@
 
 import api from '@/lib/api';
 import type { Lesson } from '@/types';
-import { ChevronDown, FileText, Video } from 'lucide-react';
+import { ChevronDown, ChevronLeft, ChevronRight, FileText, Video } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -10,9 +10,17 @@ interface LessonControlsProps {
   lesson: Lesson;
   contentMode: 'video' | 'text';
   onContentModeChange: (mode: 'video' | 'text') => void;
+  isContentCollapsed: boolean;
+  onToggleCollapse: () => void;
 }
 
-export function LessonControls({ lesson, contentMode, onContentModeChange }: LessonControlsProps) {
+export function LessonControls({ 
+  lesson, 
+  contentMode, 
+  onContentModeChange,
+  isContentCollapsed,
+  onToggleCollapse 
+}: LessonControlsProps) {
   const router = useRouter();
   const [chaptersWithLessons, setChaptersWithLessons] = useState<any[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -39,8 +47,21 @@ export function LessonControls({ lesson, contentMode, onContentModeChange }: Les
 
   return (
     <div className="flex items-center gap-4">
+      {/* Content Panel Toggle */}
+      <button
+        onClick={onToggleCollapse}
+        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white transition-all duration-200"
+        title={isContentCollapsed ? 'Show lesson content' : 'Hide lesson content'}
+      >
+        {isContentCollapsed ? (
+          <ChevronRight className="w-4 h-4" />
+        ) : (
+          <ChevronLeft className="w-4 h-4" />
+        )}
+      </button>
+
       {/* Video/Text Toggle */}
-      {hasVideo && (
+      {hasVideo && !isContentCollapsed && (
         <div className="toggle-group">
           <button
             onClick={() => onContentModeChange('video')}

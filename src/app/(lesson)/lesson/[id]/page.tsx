@@ -18,6 +18,7 @@ export default function LessonPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [contentMode, setContentMode] = useState<'video' | 'text'>('text');
+  const [isContentCollapsed, setIsContentCollapsed] = useState(false);
 
   useEffect(() => {
     const fetchLesson = async () => {
@@ -68,13 +69,16 @@ export default function LessonPage() {
           lesson={lesson}
           contentMode={contentMode}
           onContentModeChange={setContentMode}
+          isContentCollapsed={isContentCollapsed}
+          onToggleCollapse={() => setIsContentCollapsed(!isContentCollapsed)}
         />
       </header>
       
-      <main className="lesson-content">
+      <main className={`lesson-content ${isContentCollapsed ? 'content-collapsed' : ''}`}>
         <ContentPanel
           lesson={lesson}
           mode={contentMode}
+          isCollapsed={isContentCollapsed}
         />
         <EditorPanel lesson={lesson} />
       </main>

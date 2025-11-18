@@ -1,9 +1,21 @@
+'use client';
+
+import { ActivityFeed } from '@/components/leaderboard/ActivityFeed';
+import { Top20List } from '@/components/leaderboard/Top20List';
+import { TopThreePodium } from '@/components/leaderboard/TopThreePodium';
+
 export default function LeaderboardPage() {
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold text-white">Leaderboard</h1>
-      <p className="text-white/50 mt-2">Coming in Phase 6</p>
+    <div className="leaderboard-container">
+      <aside className="left-panel">
+        <Top20List />
+      </aside>
+      <main className="center-panel">
+        <TopThreePodium />
+      </main>
+      <aside className="right-panel">
+        <ActivityFeed />
+      </aside>
     </div>
   );
 }
-

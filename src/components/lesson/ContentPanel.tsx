@@ -6,9 +6,14 @@ import { MarkdownContent } from './MarkdownContent';
 interface ContentPanelProps {
   lesson: Lesson;
   mode: 'video' | 'text';
+  isCollapsed: boolean;
 }
 
-export function ContentPanel({ lesson, mode }: ContentPanelProps) {
+export function ContentPanel({ lesson, mode, isCollapsed }: ContentPanelProps) {
+  if (isCollapsed) {
+    return null;
+  }
+
   return (
     <div className="content-panel">
       {mode === 'video' && lesson.video_url ? (

@@ -1,9 +1,16 @@
+'use client';
+
+import { ChallengeContent } from '@/components/challenges/ChallengeContent';
+import { CockpitView } from '@/components/challenges/CockpitView';
+import { PilotHands } from '@/components/challenges/PilotHands';
+
 export default function ChallengesPage() {
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold text-white">Challenges</h1>
-      <p className="text-white/50 mt-2">Coming in Phase 5</p>
+    <div className="challenges-container">
+      <CockpitView>
+        <ChallengeContent />
+      </CockpitView>
+      <PilotHands />
     </div>
   );
 }
-

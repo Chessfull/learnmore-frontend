@@ -40,6 +40,8 @@ export interface Chapter {
 
 export interface Lesson {
   id: string;
+  chapter_id: string;
+  tech_stack: string;
   title: string;
   description: string;
   type: 'ASSIGNMENT' | 'THEORY' | 'QUIZ' | 'CHALLENGE';
@@ -48,8 +50,19 @@ export interface Lesson {
   video_url?: string;
   starter_code?: string;
   hints?: string;
+  order_index: number;
+  estimated_time: number;
   xp_reward: number;
   is_completed?: boolean;
+  progress?: {
+    id: string;
+    is_completed: boolean;
+    completed_at?: string;
+    best_score: number;
+    attempts: number;
+    time_spent_secs: number;
+    xp_earned: number;
+  };
 }
 
 // Challenge Types

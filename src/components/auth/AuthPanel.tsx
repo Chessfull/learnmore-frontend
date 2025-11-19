@@ -13,15 +13,17 @@ export function AuthPanel() {
   const [activeTab, setActiveTab] = useState<AuthTab>('login');
 
   return (
-    <GlassCard padding="lg" glow="cyan">
+    <GlassCard padding="lg" glow="cyan" className="h-full flex flex-col">
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-8 text-center">
         <h2 className="text-3xl font-bold text-white mb-2">
-          {activeTab === 'login' ? 'Welcome Back' : 'Join LearnMore'}
+          {activeTab === 'login' ? 'Ready for take-off?' : 'Join LearnMore'}
         </h2>
+
+
         <p className="text-white/60">
           {activeTab === 'login'
-            ? 'Continue your space learning journey'
+            ? 'Join thousands of developers exploring the code universe'
             : 'Start your programming adventure in space'}
         </p>
       </div>

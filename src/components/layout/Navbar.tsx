@@ -1,24 +1,30 @@
 'use client';
 
+import { useNotifications } from '@/hooks/useNotifications';
 import { useAuthStore } from '@/store/authStore';
 import { clsx } from 'clsx';
 import { Bell, LogOut, Menu, User, X } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { NotificationPanel } from './NotificationPanel';
 
 const navLinks = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/courses', label: 'Courses' },
   { href: '/challenges', label: 'Challenges' },
   { href: '/leaderboard', label: 'Leaderboard' },
+  { href: '/profile', label: 'Profile' },
 ];
 
 export function Navbar() {
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
+  const { unreadCount } = useNotifications();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   return (
     <nav className="sticky top-0 z-50 bg-[#0a0f1c]/80 backdrop-blur-md border-b border-white/10">
@@ -26,9 +32,13 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-[#00d4ff] to-[#8b5cf6] flex items-center justify-center">
-              <span className="text-white font-bold text-sm">LM</span>
-            </div>
+            <Image
+              src="/images/logo/logo.png"
+              alt="Learn More"
+              width={48}
+              height={48}
+              className="w-12 h-12"
+            />
             <span className="text-white font-semibold hidden sm:block">LearnMore</span>
           </Link>
 
@@ -56,11 +66,23 @@ export function Navbar() {
           {/* Right Side */}
           <div className="flex items-center gap-4">
             {/* Notifications */}
-            <button className="relative p-2 text-white/70 hover:text-white">
-              <Bell className="w-5 h-5" />
-              {/* Notification badge - will be dynamic */}
-              <span className="absolute top-1 right-1 w-2 h-2 bg-[#00d4ff] rounded-full" />
-            </button>
+            <div className="relative">
+              <button 
+                onClick={() => setNotificationsOpen(!notificationsOpen)}
+                className="relative p-2 text-white/70 hover:text-white transition-colors"
+              >
+                <Bell className="w-5 h-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1 right-1 min-w-[16px] h-4 px-1 flex items-center justify-center bg-[#00d4ff] text-[#0a0f1c] text-xs font-bold rounded-full">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </button>
+              <NotificationPanel 
+                isOpen={notificationsOpen} 
+                onClose={() => setNotificationsOpen(false)} 
+              />
+            </div>
 
             {/* User Menu */}
             <div className="relative">

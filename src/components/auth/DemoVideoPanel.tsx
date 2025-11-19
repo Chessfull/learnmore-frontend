@@ -15,13 +15,12 @@ export function DemoVideoPanel() {
   };
 
   return (
-    <GlassCard padding="lg" glow="purple">
+    <GlassCard padding="lg" glow="purple" className="h-full flex flex-col">
       {/* Header */}
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white mb-2">See LearnMore in Action</h2>
-        <p className="text-white/60">
-          Watch how our platform helps you master programming through an immersive space-themed
-          experience
+        <h2 className="text-2xl font-bold text-white mb-2 text-center">Experience Zero-Gravity Learning</h2>
+        <p className="text-white/60 text-center">
+        See in 2 minutes why 10,000+ developers started their journey here
         </p>
       </div>
 
@@ -52,10 +51,9 @@ export function DemoVideoPanel() {
 
       {/* Features List */}
       <div className="mt-6 space-y-3">
-        <FeatureItem text="Interactive coding challenges with real-time feedback" />
-        <FeatureItem text="Progress tracking and gamification system" />
-        <FeatureItem text="Learn multiple programming languages" />
-        <FeatureItem text="Compete on leaderboards and earn achievements" />
+        <FeatureItem text="Real-time code validation and error hints" />
+        <FeatureItem text="Track progress with achievements, streaks, and milestones" />
+        <FeatureItem text="Compete on leaderboards with a global community" />
       </div>
     </GlassCard>
   );

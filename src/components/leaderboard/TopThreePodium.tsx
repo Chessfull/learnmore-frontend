@@ -21,9 +21,17 @@ export function TopThreePodium() {
     const fetchTopThree = async () => {
       try {
         const response = await api.get('/leaderboard/global?limit=3');
-        setTopThree(response.data.data || []);
+        // Handle multiple response formats
+        let data = [];
+        if (response.data?.data) {
+          data = Array.isArray(response.data.data) ? response.data.data : [];
+        } else if (Array.isArray(response.data)) {
+          data = response.data;
+        }
+        setTopThree(data);
       } catch (error) {
         console.error('Failed to fetch top 3:', error);
+        setTopThree([]);
       } finally {
         setIsLoading(false);
       }

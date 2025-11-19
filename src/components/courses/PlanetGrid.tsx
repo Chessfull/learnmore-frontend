@@ -23,6 +23,7 @@ export function PlanetGrid() {
   const [isLoading, setIsLoading] = useState(true);
   const [hoveredPlanet, setHoveredPlanet] = useState<string | null>(null);
   const [previewPosition, setPreviewPosition] = useState({ top: 0, left: 0 });
+  const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
 
   // Planet positions (organic layout)
   const planetPositions = [
@@ -83,6 +84,12 @@ export function PlanetGrid() {
   };
 
   const handlePlanetHover = (techStack: string, hovered: boolean, element?: HTMLElement) => {
+    // Clear any existing timeout
+    if (closeTimeout) {
+      clearTimeout(closeTimeout);
+      setCloseTimeout(null);
+    }
+
     if (hovered && element) {
       const rect = element.getBoundingClientRect();
       const containerRect = containerRef.current?.getBoundingClientRect();
@@ -115,7 +122,19 @@ export function PlanetGrid() {
         setHoveredPlanet(techStack);
       }
     } else {
-      setHoveredPlanet(null);
+      // Add delay before closing to allow mouse to move to preview
+      const timeout = setTimeout(() => {
+        setHoveredPlanet(null);
+      }, 150);
+      setCloseTimeout(timeout);
+    }
+  };
+
+  const handlePreviewHover = (hovered: boolean) => {
+    // Clear close timeout when hovering preview
+    if (hovered && closeTimeout) {
+      clearTimeout(closeTimeout);
+      setCloseTimeout(null);
     }
   };
 
@@ -163,6 +182,7 @@ export function PlanetGrid() {
           techStack={hoveredPlanet}
           position={previewPosition}
           onClose={() => setHoveredPlanet(null)}
+          onHover={handlePreviewHover}
         />
       )}
     </div>

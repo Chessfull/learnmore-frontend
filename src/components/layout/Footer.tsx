@@ -1,4 +1,5 @@
-import { Github, Twitter } from 'lucide-react';
+import { Instagram, Youtube } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export function Footer() {
@@ -8,9 +9,13 @@ export function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Logo & Copyright */}
           <div className="flex items-center gap-3">
-            <div className="w-6 h-6 rounded bg-linear-to-br from-[#00d4ff] to-[#8b5cf6] flex items-center justify-center">
-              <span className="text-white font-bold text-xs">LM</span>
-            </div>
+            <Image
+              src="/images/logo/logo.png"
+              alt="LearnMore"
+              width={32}
+              height={32}
+              className="w-8 h-8"
+            />
             <span className="text-white/50 text-sm">
               © {new Date().getFullYear()} LearnMore. All rights reserved.
             </span>
@@ -18,24 +23,24 @@ export function Footer() {
 
           {/* Links */}
           <div className="flex items-center gap-6">
-            <Link href="#" className="text-white/50 hover:text-white text-sm">
+            <Link href="/about" className="text-white/50 hover:text-white text-sm transition-colors">
               About
             </Link>
-            <Link href="#" className="text-white/50 hover:text-white text-sm">
+            <Link href="/privacy" className="text-white/50 hover:text-white text-sm transition-colors">
               Privacy
             </Link>
-            <Link href="#" className="text-white/50 hover:text-white text-sm">
+            <Link href="/terms" className="text-white/50 hover:text-white text-sm transition-colors">
               Terms
             </Link>
           </div>
 
           {/* Social */}
           <div className="flex items-center gap-4">
-            <a href="#" className="text-white/50 hover:text-white">
-              <Github className="w-5 h-5" />
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white transition-colors">
+              <Instagram className="w-5 h-5" />
             </a>
-            <a href="#" className="text-white/50 hover:text-white">
-              <Twitter className="w-5 h-5" />
+            <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white transition-colors">
+              <Youtube className="w-5 h-5" />
             </a>
           </div>
         </div>

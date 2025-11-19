@@ -63,10 +63,10 @@ export function Planet({ techStack, position, animationDelay, onClick, onHover }
         <Image
           src={getPlanetImage(techStack.name)}
           alt={techStack.display_name}
-          width={140}
-          height={140}
+          width={210}
+          height={210}
           className="planet-image"
-          sizes="140px"
+          sizes="(max-width: 768px) 150px, (max-width: 1024px) 180px, 210px"
         />
         {/* Glow Effect */}
         <div

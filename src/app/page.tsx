@@ -94,12 +94,13 @@ export default function LandingPage() {
           ) : (
             <div className="w-full max-w-7xl mx-auto">
               {/* Auth Panels Container */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-8">
                 {/* Left Panel - Auth */}
                 <motion.div
                   initial={{ opacity: 0, y: 50, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ duration: 0.6, ease: 'easeOut', delay: 0.3 }}
+                  className="flex"
                 >
                   <AuthPanel />
                 </motion.div>
@@ -109,10 +110,40 @@ export default function LandingPage() {
                   initial={{ opacity: 0, y: 50, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ duration: 0.6, ease: 'easeOut', delay: 0.5 }}
+                  className="flex"
                 >
                   <DemoVideoPanel />
                 </motion.div>
               </div>
+
+              {/* Trusted By Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: 'easeOut', delay: 0.7 }}
+                className="text-center mt-20 mr-30"
+              >
+                <p className="text-white/50 text-xl mb-4 mt-4">
+                  Trusted by developers from
+                </p>
+                <div className="flex items-center justify-center gap-8 md:gap-12">
+                  <img
+                    src="/images/icon/google-intro.svg"
+                    alt="Google"
+                    className="h-8 md:h-10 opacity-60 hover:opacity-100 transition-opacity"
+                  />
+                  <img
+                    src="/images/icon/spotify-intro.svg"
+                    alt="Spotify"
+                    className="h-8 md:h-10 opacity-60 hover:opacity-100 transition-opacity"
+                  />
+                  <img
+                    src="/images/icon/netflix-intro.svg"
+                    alt="Netflix"
+                    className="h-8 md:h-10 opacity-60 hover:opacity-100 transition-opacity"
+                  />
+                </div>
+              </motion.div>
             </div>
           )}
         </motion.div>

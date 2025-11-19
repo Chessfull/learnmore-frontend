@@ -96,7 +96,7 @@ export function StatsCard() {
           <div className="pt-4 border-t border-white/10">
             <div className="flex items-start gap-2 mb-2">
               <Quote className="w-4 h-4 text-[#8b5cf6] shrink-0 mt-1" />
-              <span className="text-xs font-medium text-white/70">Today's Quote</span>
+              <span className="text-xs font-medium text-white/70">Today&apos;s Quote</span>
             </div>
             <div className="daily-quote">
               <p className="text-sm italic text-white/80 leading-relaxed">{quote.quote}</p>

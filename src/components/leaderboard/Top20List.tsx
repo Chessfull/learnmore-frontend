@@ -25,7 +25,13 @@ export function Top20List() {
     try {
       setIsLoading(true);
       const response = await api.get(`/leaderboard/global?limit=20&page=${pageNum}`);
-      const data = response.data.data || [];
+      // Ensure data is always an array - handle multiple response formats
+      let data = [];
+      if (response.data?.data) {
+        data = Array.isArray(response.data.data) ? response.data.data : [];
+      } else if (Array.isArray(response.data)) {
+        data = response.data;
+      }
       
       if (pageNum === 1) {
         setEntries(data);
@@ -36,6 +42,10 @@ export function Top20List() {
       setHasMore(data.length === 20);
     } catch (error) {
       console.error('Failed to fetch leaderboard:', error);
+      // Ensure entries is always an array even on error
+      if (pageNum === 1) {
+        setEntries([]);
+      }
     } finally {
       setIsLoading(false);
     }

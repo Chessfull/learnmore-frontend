@@ -151,39 +151,43 @@ export function ChallengeContent() {
   }
 
   return (
-    <div className="challenge-wrapper">
-      {/* Filters */}
-      <ChallengeFilters
-        filters={filters}
-        onFiltersChange={setFilters}
-      />
+    <div className="challenge-wrapper relative">
+      {/* Filters - Top Right */}
+      <div className="absolute top-0 right-0 z-10">
+        <ChallengeFilters
+          filters={filters}
+          onFiltersChange={setFilters}
+        />
+      </div>
 
       {/* Challenge Display */}
-      {challenge.type === 'QUIZ' ? (
-        <QuizChallenge
-          challenge={challenge}
-          selectedAnswer={selectedAnswer}
-          onSelectAnswer={setSelectedAnswer}
-          onSubmit={submitChallenge}
-          timeLeft={timeLeft}
-          isActive={state === 'active'}
-          onStart={startChallenge}
-          isReady={state === 'ready'}
-          isSubmitting={state === 'submitted'}
-        />
-      ) : (
-        <CodeChallenge
-          challenge={challenge}
-          code={code}
-          onCodeChange={setCode}
-          onSubmit={submitChallenge}
-          timeLeft={timeLeft}
-          isActive={state === 'active'}
-          onStart={startChallenge}
-          isReady={state === 'ready'}
-          isSubmitting={state === 'submitted'}
-        />
-      )}
+      <div className="max-w-4xl mx-auto pt-12">
+        {challenge.type === 'QUIZ' ? (
+          <QuizChallenge
+            challenge={challenge}
+            selectedAnswer={selectedAnswer}
+            onSelectAnswer={setSelectedAnswer}
+            onSubmit={submitChallenge}
+            timeLeft={timeLeft}
+            isActive={state === 'active'}
+            onStart={startChallenge}
+            isReady={state === 'ready'}
+            isSubmitting={state === 'submitted'}
+          />
+        ) : (
+          <CodeChallenge
+            challenge={challenge}
+            code={code}
+            onCodeChange={setCode}
+            onSubmit={submitChallenge}
+            timeLeft={timeLeft}
+            isActive={state === 'active'}
+            onStart={startChallenge}
+            isReady={state === 'ready'}
+            isSubmitting={state === 'submitted'}
+          />
+        )}
+      </div>
     </div>
   );
 }

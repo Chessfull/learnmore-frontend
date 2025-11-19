@@ -10,7 +10,7 @@ export function NoProgressState() {
   const router = useRouter();
 
   return (
-    <GlassCard padding="none" glow="purple" className="relative overflow-hidden">
+    <GlassCard padding="none" glow="purple" className="relative overflow-hidden h-full">
       {/* Space Background */}
       <div className="absolute inset-0 bg-linear-to-br from-[#0a0f1c] via-[#1a0a2e] to-[#0d1b2a]">
         {/* Floating Stars */}

@@ -142,7 +142,7 @@ export function LearningRoadmap() {
     .join(' ');
 
   return (
-    <GlassCard padding="lg" glow="purple">
+    <GlassCard padding="lg" glow="purple" className="w-full h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl font-bold text-white">
@@ -151,7 +151,7 @@ export function LearningRoadmap() {
       </div>
 
       {/* Roadmap Container */}
-      <div className="relative">
+      <div className="relative flex-1 flex items-center">
         {/* Scroll Buttons */}
         <button
           onClick={() => handleScroll('left')}

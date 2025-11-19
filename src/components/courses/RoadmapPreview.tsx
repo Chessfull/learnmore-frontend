@@ -2,7 +2,7 @@
 
 import { GlassCard } from '@/components/ui/GlassCard';
 import api from '@/lib/api';
-import { BookOpen, ChevronRight, Clock } from 'lucide-react';
+import { BookOpen, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface Chapter {
@@ -17,9 +17,10 @@ interface RoadmapPreviewProps {
   techStack: string;
   position: { top: number; left: number };
   onClose: () => void;
+  onHover?: (hovered: boolean) => void;
 }
 
-export function RoadmapPreview({ techStack, position, onClose }: RoadmapPreviewProps) {
+export function RoadmapPreview({ techStack, position, onClose, onHover }: RoadmapPreviewProps) {
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [totalLessons, setTotalLessons] = useState(0);
@@ -31,9 +32,9 @@ export function RoadmapPreview({ techStack, position, onClose }: RoadmapPreviewP
         const chaptersData = response.data.data || [];
         setChapters(chaptersData);
         
-        // Calculate total lessons
+        // Calculate total lessons from lesson_count field
         const total = chaptersData.reduce(
-          (sum: number, chapter: any) => sum + (chapter.lessons?.length || 0),
+          (sum: number, chapter: any) => sum + (chapter.lesson_count || 0),
           0
         );
         setTotalLessons(total);
@@ -54,6 +55,7 @@ export function RoadmapPreview({ techStack, position, onClose }: RoadmapPreviewP
         top: `${position.top}px`,
         left: `${position.left}px`,
       }}
+      onMouseEnter={() => onHover?.(true)}
       onMouseLeave={onClose}
     >
       <GlassCard padding="md" glow="cyan">
@@ -64,10 +66,6 @@ export function RoadmapPreview({ techStack, position, onClose }: RoadmapPreviewP
             <div className="flex items-center gap-1">
               <BookOpen className="w-4 h-4" />
               <span>{totalLessons} lessons</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Clock className="w-4 h-4" />
-              <span>~{Math.ceil(totalLessons * 15)} min</span>
             </div>
           </div>
         </div>
@@ -92,7 +90,7 @@ export function RoadmapPreview({ techStack, position, onClose }: RoadmapPreviewP
                     {chapter.title}
                   </p>
                   <p className="text-xs text-white/50">
-                    {chapter.lessons?.length || 0} lessons
+                    {chapter.lesson_count || 0} lessons
                   </p>
                 </div>
                 <ChevronRight className="w-4 h-4 text-white/30 shrink-0 mt-0.5" />

@@ -21,13 +21,22 @@ export function TopThreePodium() {
     const fetchTopThree = async () => {
       try {
         const response = await api.get('/leaderboard/global?limit=3');
-        // Handle multiple response formats
+        
+        console.log('Top 3 API response:', response.data); // Debug log
+        
+        // Extract entries from the response
+        // Backend returns: { status: "success", data: { entries: [...], user_position: {...} } }
         let data = [];
-        if (response.data?.data) {
-          data = Array.isArray(response.data.data) ? response.data.data : [];
+        if (response.data?.data?.entries) {
+          data = Array.isArray(response.data.data.entries) ? response.data.data.entries : [];
+        } else if (response.data?.entries) {
+          data = Array.isArray(response.data.entries) ? response.data.entries : [];
+        } else if (response.data?.data && Array.isArray(response.data.data)) {
+          data = response.data.data;
         } else if (Array.isArray(response.data)) {
           data = response.data;
         }
+        
         setTopThree(data);
       } catch (error) {
         console.error('Failed to fetch top 3:', error);
@@ -60,7 +69,10 @@ export function TopThreePodium() {
 
   return (
     <div className="podium-container">
-      <h2 className="podium-title">🎖️ Hall of Fame</h2>
+      <div className="mb-8">
+        <h2 className="podium-title">🎖️ Hall of Fame</h2>
+        <p className="text-center text-white/60 text-sm mt-2">Celebrating our top performers</p>
+      </div>
       
       <div className="podium">
         {/* Second Place */}

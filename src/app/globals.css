@@ -164,6 +164,11 @@
     @apply flex-1 grid grid-cols-1 lg:grid-cols-2 overflow-hidden transition-all duration-300;
   }
 
+  /* Theory lesson: 80/20 split */
+  .lesson-content.theory-mode {
+    @apply lg:grid-cols-[80%_20%];
+  }
+
   .lesson-content.content-collapsed {
     @apply lg:grid-cols-1;
   }
@@ -173,12 +178,17 @@
     @apply p-6 overflow-y-auto;
   }
 
+  /* Theory mode: full viewport for video */
+  .theory-mode .content-panel {
+    @apply p-0 flex flex-col;
+  }
+
   .video-wrapper {
-    @apply max-w-4xl;
+    @apply w-full h-full flex flex-col;
   }
 
   .video-container {
-    @apply relative w-full pb-[56.25%] h-0 overflow-hidden rounded-lg border border-white/10;
+    @apply relative w-full h-full flex-1 overflow-hidden border-none;
   }
 
   .video-container iframe {
@@ -571,7 +581,7 @@
   /* Leaderboard Page */
   .leaderboard-container {
     @apply grid gap-6 p-6 min-h-[calc(100vh-theme(spacing.32))];
-    grid-template-columns: 280px 1fr 320px;
+    grid-template-columns: 1fr 2fr 1fr; /* %25 - %50 - %25 */
   }
 
   @media (max-width: 1200px) {
@@ -735,6 +745,8 @@
   /* Activity Feed */
   .activity-feed {
     @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 flex flex-col overflow-hidden;
+    min-height: 600px;
+    max-height: 600px;
   }
 
   .feed-header {

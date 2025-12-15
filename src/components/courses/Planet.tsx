@@ -58,15 +58,15 @@ export function Planet({ techStack, position, animationDelay, onClick, onHover }
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
     >
-      {/* Planet Image */}
+      {/* Planet Image - 1.5x Larger */}
       <div className="planet-image-wrapper">
         <Image
           src={getPlanetImage(techStack.name)}
           alt={techStack.display_name}
-          width={210}
-          height={210}
+          width={315}
+          height={315}
           className="planet-image"
-          sizes="(max-width: 768px) 150px, (max-width: 1024px) 180px, 210px"
+          sizes="(max-width: 768px) 225px, (max-width: 1024px) 270px, 315px"
         />
         {/* Glow Effect */}
         <div

@@ -1,30 +1,40 @@
 'use client';
 
 import { useNotifications } from '@/hooks/useNotifications';
+import { getAvatarUrl, getUserInitials } from '@/lib/utils/avatar';
 import { useAuthStore } from '@/store/authStore';
 import { clsx } from 'clsx';
 import { Bell, LogOut, Menu, User, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { NotificationPanel } from './NotificationPanel';
 
-const navLinks = [
+const getNavLinks = (isAdmin: boolean) => [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/courses', label: 'Courses' },
   { href: '/challenges', label: 'Challenges' },
   { href: '/leaderboard', label: 'Leaderboard' },
-  { href: '/profile', label: 'Profile' },
+  ...(isAdmin ? [{ href: '/admin', label: 'Contents' }] : []),
 ];
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { user, logout } = useAuthStore();
   const { unreadCount } = useNotifications();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+
+  const navLinks = getNavLinks(user?.role === 'ADMIN');
+
+  const handleLogout = () => {
+    logout();
+    setUserMenuOpen(false);
+    router.push('/');
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-[#0a0f1c]/80 backdrop-blur-md border-b border-white/10">
@@ -90,30 +100,40 @@ export function Navbar() {
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                 className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-white/5"
               >
-                {user?.avatar ? (
+                {getAvatarUrl(user?.avatar) ? (
                   <img
-                    src={user.avatar}
-                    alt={user.display_name}
+                    src={getAvatarUrl(user?.avatar)!}
+                    alt={user?.display_name || 'User'}
                     className="w-8 h-8 rounded-full object-cover"
+                    onError={(e) => {
+                      // Fallback to initials if image fails to load
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-linear-to-br from-[#8b5cf6] to-[#00d4ff] flex items-center justify-center">
-                    <User className="w-4 h-4 text-white" />
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#8b5cf6] to-[#00d4ff] flex items-center justify-center text-white text-sm font-semibold">
+                    {getUserInitials(user?.display_name || '')}
                   </div>
                 )}
               </button>
 
               {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-[#0a0f1c]/95 backdrop-blur-md border border-white/10 rounded-xl shadow-xl py-1">
+                <div className="absolute right-0 mt-2 w-48 bg-[#0a0f1c]/95 backdrop-blur-md border border-white/10 rounded-xl shadow-xl py-1 z-50">
                   <div className="px-4 py-2 border-b border-white/10">
                     <p className="text-sm font-medium text-white">{user?.display_name}</p>
                     <p className="text-xs text-white/50">{user?.email}</p>
                   </div>
+                  <Link
+                    href="/profile"
+                    onClick={() => setUserMenuOpen(false)}
+                    className="w-full px-4 py-2 text-left text-sm text-white/70 hover:text-white hover:bg-white/5 flex items-center gap-2"
+                  >
+                    <User className="w-4 h-4" />
+                    Profile
+                  </Link>
                   <button
-                    onClick={() => {
-                      logout();
-                      setUserMenuOpen(false);
-                    }}
+                    onClick={handleLogout}
                     className="w-full px-4 py-2 text-left text-sm text-white/70 hover:text-white hover:bg-white/5 flex items-center gap-2"
                   >
                     <LogOut className="w-4 h-4" />
@@ -151,6 +171,16 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
+            <button
+              onClick={() => {
+                handleLogout();
+                setMobileMenuOpen(false);
+              }}
+              className="w-full px-4 py-2 text-left text-sm text-white/70 hover:text-white hover:bg-white/5 flex items-center gap-2 rounded-lg mt-2"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
           </div>
         )}
       </div>

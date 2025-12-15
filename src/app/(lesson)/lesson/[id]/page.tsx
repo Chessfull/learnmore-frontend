@@ -19,17 +19,46 @@ export default function LessonPage() {
   const [error, setError] = useState<string | null>(null);
   const [contentMode, setContentMode] = useState<'video' | 'text'>('text');
   const [isContentCollapsed, setIsContentCollapsed] = useState(false);
+  const [allLessons, setAllLessons] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchLesson = async () => {
       try {
         setIsLoading(true);
         const response = await api.get(`/lessons/${lessonId}`);
-        setLesson(response.data.data);
+        const lessonData = response.data.data;
+        setLesson(lessonData);
 
-        // Default to video mode if video URL exists
-        if (response.data.data.video_url) {
-          setContentMode('video');
+        // Default to text mode (user can toggle to video)
+        setContentMode('text');
+
+        // Fetch all lessons for navigation
+        if (lessonData.tech_stack) {
+          try {
+            const roadmapRes = await api.get(`/progress/roadmap/${lessonData.tech_stack}`);
+            const roadmapData = roadmapRes.data?.data || roadmapRes.data;
+            
+            // Flatten lessons from all chapters
+            const flatLessons: any[] = [];
+            if (roadmapData.chapters) {
+              roadmapData.chapters.forEach((chapter: any) => {
+                if (chapter.lessons) {
+                  chapter.lessons.forEach((lesson: any) => {
+                    flatLessons.push({
+                      id: lesson.id,
+                      title: lesson.title,
+                      order_index: lesson.order_index,
+                      is_completed: lesson.is_completed,
+                    });
+                  });
+                }
+              });
+            }
+            flatLessons.sort((a, b) => a.order_index - b.order_index);
+            setAllLessons(flatLessons);
+          } catch (error) {
+            console.error('Failed to fetch lesson navigation:', error);
+          }
         }
       } catch (err: any) {
         console.error('Failed to fetch lesson:', err);
@@ -61,6 +90,29 @@ export default function LessonPage() {
     );
   }
 
+  const handleLessonComplete = async () => {
+    try {
+      // Mark lesson as complete on backend
+      await api.post(`/progress/mark-complete/${lessonId}`, {
+        score: 100 // For theory lessons, always 100%
+      });
+
+      // Show success message (XP will be awarded by backend)
+      // Find next lesson
+      const currentIndex = allLessons.findIndex(l => l.id === lesson.id);
+      if (currentIndex >= 0 && currentIndex < allLessons.length - 1) {
+        const nextLesson = allLessons[currentIndex + 1];
+        window.location.href = `/lesson/${nextLesson.id}`;
+      } else {
+        // No more lessons, return to dashboard
+        window.location.href = '/dashboard';
+      }
+    } catch (error: any) {
+      console.error('Failed to mark lesson complete:', error);
+      alert('Failed to save progress. Please try again.');
+    }
+  };
+
   return (
     <div className="lesson-container">
       <header className="lesson-header">
@@ -71,16 +123,20 @@ export default function LessonPage() {
           onContentModeChange={setContentMode}
           isContentCollapsed={isContentCollapsed}
           onToggleCollapse={() => setIsContentCollapsed(!isContentCollapsed)}
+          allLessons={allLessons}
         />
       </header>
       
-      <main className={`lesson-content ${isContentCollapsed ? 'content-collapsed' : ''}`}>
+      <main className={`lesson-content ${isContentCollapsed ? 'content-collapsed' : ''} ${lesson.type === 'THEORY' ? 'theory-mode' : ''}`}>
         <ContentPanel
           lesson={lesson}
           mode={contentMode}
           isCollapsed={isContentCollapsed}
         />
-        <EditorPanel lesson={lesson} />
+        <EditorPanel 
+          lesson={lesson}
+          onLessonComplete={handleLessonComplete}
+        />
       </main>
     </div>
   );

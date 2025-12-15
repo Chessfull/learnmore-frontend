@@ -29,43 +29,34 @@ export function NoProgressState() {
           ))}
         </div>
 
-        {/* Floating Planets - Background Layer */}
+        {/* Floating Planets - Background Layer - Optimal Sizes */}
         <FloatingPlanet
           src="/images/planets/go-planet.png"
           alt="Go"
-          position="top-[15%] left-[10%]"
-          size="w-24 h-24"
+          position="top-[12%] left-[8%]"
+          size="w-40 h-40 md:w-48 md:h-48 lg:w-56 lg:h-56"
           delay={0}
         />
         <FloatingPlanet
           src="/images/planets/python-planet.png"
           alt="Python"
-          position="top-[60%] left-[8%]"
-          size="w-20 h-20"
+          position="top-[58%] left-[5%]"
+          size="w-36 h-36 md:w-44 md:h-44 lg:w-52 lg:h-52"
           delay={1.5}
         />
         <FloatingPlanet
           src="/images/planets/java-planet.png"
           alt="Java"
-          position="top-[25%] right-[12%]"
-          size="w-28 h-28"
+          position="top-[22%] right-[10%]"
+          size="w-44 h-44 md:w-52 md:h-52 lg:w-60 lg:h-60"
           delay={0.8}
         />
         <FloatingPlanet
-          src="/images/planets/csharp-planet.png"
-          alt="C#"
-          position="top-[70%] right-[15%]"
-          size="w-20 h-20"
-          delay={2}
-        />
-
-        {/* Additional decorative planets (smaller) */}
-        <FloatingPlanet
           src="/images/planets/nodejs-planet.png"
-          alt="Node"
-          position="top-[45%] right-[5%]"
-          size="w-16 h-16"
-          delay={1.2}
+          alt="Node.js"
+          position="top-[68%] right-[12%]"
+          size="w-36 h-36 md:w-44 md:h-44 lg:w-52 lg:h-52"
+          delay={2}
         />
       </div>
 

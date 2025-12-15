@@ -1,8 +1,8 @@
 'use client';
 
 import { Activity } from '@/hooks/useActivityFeed';
+import { getAvatarUrl, getUserInitials } from '@/lib/utils/avatar';
 import { formatDistanceToNow } from 'date-fns';
-import Image from 'next/image';
 
 interface ActivityItemProps {
   activity: Activity;
@@ -37,17 +37,15 @@ export function ActivityItem({ activity }: ActivityItemProps) {
   return (
     <div className="activity-item">
       <div className="activity-avatar">
-        {activity.user.avatar ? (
-          <Image
-            src={activity.user.avatar}
+        {getAvatarUrl(activity.user.avatar) ? (
+          <img
+            src={getAvatarUrl(activity.user.avatar)!}
             alt={activity.user.display_name}
-            width={32}
-            height={32}
-            className="rounded-full"
+            className="w-8 h-8 rounded-full object-cover"
           />
         ) : (
           <div className="w-8 h-8 rounded-full bg-[#00d4ff]/20 flex items-center justify-center text-[#00d4ff] text-sm font-bold">
-            {activity.user.display_name.charAt(0).toUpperCase()}
+            {getUserInitials(activity.user.display_name)}
           </div>
         )}
       </div>

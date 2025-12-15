@@ -15,10 +15,11 @@ export default function LandingPage() {
   const [videoError, setVideoError] = useState(false);
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated && videoEnded) {
+    // If user is already authenticated, skip video and redirect immediately
+    if (!isLoading && isAuthenticated) {
       router.push('/dashboard');
     }
-  }, [isAuthenticated, isLoading, videoEnded, router]);
+  }, [isAuthenticated, isLoading, router]);
 
   const handleVideoEnd = () => {
     setVideoEnded(true);
@@ -42,9 +43,9 @@ export default function LandingPage() {
         <div className="stars" />
       </div>
 
-      {/* Intro Video */}
+      {/* Intro Video - Only show if not authenticated */}
       <AnimatePresence>
-        {!videoEnded && (
+        {!videoEnded && !isAuthenticated && (
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}

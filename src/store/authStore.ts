@@ -78,7 +78,11 @@ export const useAuthStore = create<AuthState>()(
         try {
           const token = localStorage.getItem('access_token');
           if (!token) {
-            set({ isLoading: false });
+            set({ 
+              user: null, 
+              isAuthenticated: false, 
+              isLoading: false 
+            });
             return;
           }
 
@@ -89,6 +93,9 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false 
           });
         } catch (error) {
+          // If token is invalid or expired, clear everything
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
           set({ 
             user: null, 
             isAuthenticated: false, 

@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import { getAvatarUrl, getUserInitials } from '@/lib/utils/avatar';
 
 interface LeaderboardEntryProps {
   entry: {
@@ -35,17 +35,15 @@ export function LeaderboardEntry({ entry, isCurrentUser = false }: LeaderboardEn
       </div>
       
       <div className="entry-avatar">
-        {entry.avatar ? (
-          <Image
-            src={entry.avatar}
+        {getAvatarUrl(entry.avatar) ? (
+          <img
+            src={getAvatarUrl(entry.avatar)!}
             alt={entry.display_name}
-            width={36}
-            height={36}
-            className="rounded-full"
+            className="w-9 h-9 rounded-full object-cover"
           />
         ) : (
           <div className="w-9 h-9 rounded-full bg-[#00d4ff]/20 flex items-center justify-center text-[#00d4ff] font-bold">
-            {entry.display_name.charAt(0).toUpperCase()}
+            {getUserInitials(entry.display_name)}
           </div>
         )}
       </div>

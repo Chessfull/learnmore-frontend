@@ -1,7 +1,7 @@
 'use client';
 
 import { clsx } from 'clsx';
-import { Check, Lock } from 'lucide-react';
+import { Check, Sparkles } from 'lucide-react';
 
 interface RoadmapNodeProps {
   lesson: {
@@ -9,95 +9,88 @@ interface RoadmapNodeProps {
     title: string;
     order_index: number;
   };
-  status: 'completed' | 'current' | 'upcoming' | 'locked';
+  status: 'completed' | 'current' | 'upcoming';
   onClick?: () => void;
   showConnector?: boolean;
+  isCurrent?: boolean;
 }
 
-export function RoadmapNode({ lesson, status, onClick, showConnector = true }: RoadmapNodeProps) {
+export function RoadmapNode({ lesson, status, onClick, showConnector = true, isCurrent }: RoadmapNodeProps) {
   const isClickable = status === 'current' || status === 'upcoming';
+  const nodeSize = status === 'current' ? 'w-16 h-16' : 'w-14 h-14';
+  const statusIcon = () => {
+    if (status === 'completed') return <Check className="w-5 h-5" />;
+    if (status === 'current')
+      return (
+        <Sparkles className="w-5 h-5 text-white animate-pulse" />
+      );
+    return null;
+  };
 
   return (
-    <div className="roadmap-node">
-      {/* Node Circle */}
+    <div className="relative flex flex-col items-center text-center px-2" title={lesson.title}>
       <button
         onClick={isClickable ? onClick : undefined}
         disabled={!isClickable}
         className={clsx(
-          'node-circle',
-          status === 'completed' && 'node-completed',
-          status === 'current' && 'node-current',
-          status === 'upcoming' && 'node-upcoming',
-          status === 'locked' && 'node-locked',
-          isClickable && 'cursor-pointer hover:scale-110 transition-transform duration-200',
+          'flex items-center justify-center rounded-full border transition-all duration-300',
+          nodeSize,
+          status === 'completed' && 'bg-linear-to-b from-[#0f2d24] to-[#0b1f18] border-[#00ff88]/30 text-[#00ff88]',
+          status === 'current' &&
+            'bg-linear-to-b from-[#ff8c42] to-[#f45d22] border-[#ffd29c]/60 text-white shadow-[0_0_25px_rgba(244,93,34,0.6)]',
+          status === 'upcoming' && 'bg-[#1a2034] border-white/10 text-white/50',
+          isClickable && 'cursor-pointer hover:scale-110',
           !isClickable && 'cursor-default'
         )}
       >
-        {status === 'completed' && <Check className="w-6 h-6" />}
-        {status === 'locked' && <Lock className="w-5 h-5" />}
-        {(status === 'current' || status === 'upcoming') && (
-          <span className="text-lg font-bold">{lesson.order_index}</span>
+        {statusIcon()}
+        {status === 'upcoming' && (
+          <div className="w-2 h-2 rounded-full bg-white/50" />
         )}
       </button>
 
-      {/* Current Indicator */}
-      {status === 'current' && (
-        <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap">
-          <div className="flex flex-col items-center">
-            <span className="text-xs font-medium text-[#00d4ff] mb-1">You are here</span>
-            <div className="w-0.5 h-4 bg-[#00d4ff]" />
-          </div>
+      {isCurrent && (
+        <div className="flex flex-col items-center mt-2">
+          <span className="text-xs font-medium text-[#ffbe5c]">You are here</span>
+          <div className="w-0.5 h-4 bg-[#ffbe5c]/70 mt-1" />
         </div>
       )}
 
-      {/* Lesson Title */}
-      <div className="text-center mt-3">
-        <p
-          className={clsx(
-            'text-sm font-medium',
-            status === 'completed' && 'text-[#00ff88]',
-            status === 'current' && 'text-[#00d4ff]',
-            status === 'upcoming' && 'text-white/70',
-            status === 'locked' && 'text-white/40'
-          )}
-        >
-          {lesson.title}
-        </p>
-        {status === 'completed' && (
-          <p className="text-xs text-white/50 mt-1">Discovered</p>
+      <p
+        className={clsx(
+          'mt-3 text-xs font-medium leading-tight line-clamp-2 max-w-[140px]',
+          status === 'completed' && 'text-[#a2ffce]',
+          status === 'current' && 'text-white',
+          status === 'upcoming' && 'text-white/60'
         )}
-        {status === 'locked' && (
-          <p className="text-xs text-white/40 mt-1">Locked</p>
-        )}
-      </div>
+      >
+        {lesson.title}
+      </p>
 
-      {/* Connector Line */}
       {showConnector && (
         <svg
-          className="connector-line"
-          width="80"
-          height="100"
-          viewBox="0 0 80 100"
+          className="mt-6"
+          width="110"
+          height="40"
+          viewBox="0 0 110 40"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
+          <defs>
+            <linearGradient id={`roadmap-gradient-${lesson.id}`} x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#00ff88" />
+              <stop offset="50%" stopColor="#ffbe5c" />
+              <stop offset="100%" stopColor="#7a7d92" />
+            </linearGradient>
+          </defs>
           <path
-            d="M 0 50 Q 40 25 80 50"
-            stroke={status === 'completed' ? 'rgba(0, 255, 136, 0.3)' : 'rgba(255, 255, 255, 0.2)'}
+            d="M 0 20 Q 55 0 110 20"
+            stroke={`url(#roadmap-gradient-${lesson.id})`}
             strokeWidth="2"
-            strokeDasharray={status === 'upcoming' || status === 'locked' ? '5,5' : '0'}
+            strokeDasharray={status === 'upcoming' ? '6,6' : '0'}
+            opacity={status === 'upcoming' ? 0.4 : 0.7}
           />
         </svg>
-      )}
-
-      {/* Continue Button for Current Lesson */}
-      {status === 'current' && onClick && (
-        <button
-          onClick={onClick}
-          className="mt-2 px-4 py-1.5 bg-[#00d4ff] text-[#0a0f1c] text-xs font-semibold rounded-lg hover:bg-[#00d4ff]/90 transition-colors"
-        >
-          Continue
-        </button>
       )}
     </div>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { LearningRoadmap } from '@/components/dashboard/LearningRoadmap';
+import { ChapterRoadmap } from '@/components/dashboard/ChapterRoadmap';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { WelcomeCard } from '@/components/dashboard/WelcomeCard';
 
@@ -23,9 +23,9 @@ export default function DashboardPage() {
             </div>
           </aside>
 
-          {/* Right Panel - Learning Roadmap (75%) */}
+          {/* Right Panel - Chapter Roadmap (75%) */}
           <main className="lg:col-span-3 h-full">
-            <LearningRoadmap />
+            <ChapterRoadmap />
           </main>
         </div>
       </div>

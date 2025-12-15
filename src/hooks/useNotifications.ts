@@ -56,10 +56,23 @@ export const useNotifications = () => {
   };
 
   useEffect(() => {
+    // Only fetch notifications if user is authenticated
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
+
     fetchNotifications();
     
     // Poll for new notifications every 30 seconds
-    const interval = setInterval(fetchNotifications, 30000);
+    const interval = setInterval(() => {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        fetchNotifications();
+      }
+    }, 30000);
+    
     return () => clearInterval(interval);
   }, []);
 

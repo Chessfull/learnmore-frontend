@@ -38,7 +38,25 @@ export function PlanetGrid() {
     const fetchTechStacks = async () => {
       try {
         const response = await api.get('/tech-stacks');
-        setTechStacks(response.data.data || []);
+        const allTechStacks = response.data.data || [];
+        
+        // Filter tech stacks that have at least one chapter
+        const techStacksWithChapters = await Promise.all(
+          allTechStacks.map(async (techStack: TechStack) => {
+            try {
+              const chaptersResponse = await api.get(`/tech-stacks/${techStack.name}/chapters`);
+              const chapters = chaptersResponse.data.data || [];
+              return chapters.length > 0 ? techStack : null;
+            } catch (error) {
+              console.error(`Failed to fetch chapters for ${techStack.name}:`, error);
+              return null;
+            }
+          })
+        );
+        
+        // Remove null values (tech stacks without chapters)
+        const filteredTechStacks = techStacksWithChapters.filter((ts): ts is TechStack => ts !== null);
+        setTechStacks(filteredTechStacks);
       } catch (error) {
         console.error('Failed to fetch tech stacks:', error);
       } finally {
@@ -122,10 +140,10 @@ export function PlanetGrid() {
         setHoveredPlanet(techStack);
       }
     } else {
-      // Add delay before closing to allow mouse to move to preview
+      // Add longer delay before closing to allow mouse to move to preview
       const timeout = setTimeout(() => {
         setHoveredPlanet(null);
-      }, 150);
+      }, 300);
       setCloseTimeout(timeout);
     }
   };
@@ -135,6 +153,14 @@ export function PlanetGrid() {
     if (hovered && closeTimeout) {
       clearTimeout(closeTimeout);
       setCloseTimeout(null);
+    }
+    
+    // Set timeout when leaving preview
+    if (!hovered) {
+      const timeout = setTimeout(() => {
+        setHoveredPlanet(null);
+      }, 200);
+      setCloseTimeout(timeout);
     }
   };
 

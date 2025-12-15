@@ -3,16 +3,21 @@
 import api from '@/lib/api';
 import type { Lesson } from '@/types';
 import { Lightbulb, Play, Send } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { CodeEditor } from './CodeEditor';
 import { OutputConsole } from './OutputConsole';
 
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
+
 interface CodeEditorPanelProps {
   lesson: Lesson;
+  onLessonComplete?: () => void;
 }
 
-export function CodeEditorPanel({ lesson }: CodeEditorPanelProps) {
+export function CodeEditorPanel({ lesson, onLessonComplete }: CodeEditorPanelProps) {
   const router = useRouter();
   const [code, setCode] = useState(lesson.starter_code || '');
   const [output, setOutput] = useState('');
@@ -21,7 +26,21 @@ export function CodeEditorPanel({ lesson }: CodeEditorPanelProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mode, setMode] = useState<'idle' | 'run' | 'submit'>('idle');
   const [showHints, setShowHints] = useState(false);
-  const [xpEarned, setXpEarned] = useState<number | null>(null);
+  const [showFireworks, setShowFireworks] = useState(false);
+  const [animationData, setAnimationData] = useState<any>(null);
+  
+  // Parse hints from JSON string to array
+  const parsedHints = (() => {
+    if (!lesson.hints) return [];
+    if (Array.isArray(lesson.hints)) return lesson.hints; // Already an array
+    try {
+      const parsed = JSON.parse(lesson.hints);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      console.error('Failed to parse hints:', error);
+      return [];
+    }
+  })();
 
   const getLanguage = () => {
     const langMap: Record<string, string> = {
@@ -75,13 +94,48 @@ export function CodeEditorPanel({ lesson }: CodeEditorPanelProps) {
       setTestResults(result.test_results || []);
       
       if (result.status === 'SUCCESS') {
-        setXpEarned(result.xp_earned || lesson.xp_reward);
-        setOutput(`✅ All tests passed! You earned ${result.xp_earned || lesson.xp_reward} XP!`);
+        const xp = result.xp_earned || lesson.xp_reward;
+        setOutput(`✅ All tests passed! You earned ${xp} XP!`);
         
-        // Show success for 2 seconds, then optionally navigate to next lesson
-        setTimeout(() => {
-          // Could add "Next Lesson" button or auto-navigate
-        }, 2000);
+        // Load and show fireworks animation
+        try {
+          const response = await fetch('/animations/correct-answer.json');
+          const animData = await response.json();
+          setAnimationData(animData);
+          setShowFireworks(true);
+          
+          // Show success toast
+          toast.success(`🎉 +${xp} XP Earned!`, {
+            duration: 3000,
+            position: 'top-center',
+            style: {
+              background: 'linear-gradient(135deg, #00d4ff 0%, #8b5cf6 100%)',
+              color: 'white',
+              fontWeight: 'bold',
+              fontSize: '16px',
+            },
+          });
+          
+          // Hide animation after 3 seconds and navigate to next lesson
+          setTimeout(() => {
+            setShowFireworks(false);
+            if (onLessonComplete) {
+              onLessonComplete();
+            } else {
+              router.push('/dashboard');
+            }
+          }, 3000);
+        } catch (error) {
+          console.error('Failed to load animation:', error);
+          toast.success(`🎉 +${xp} XP Earned!`, { duration: 3000 });
+          setTimeout(() => {
+            if (onLessonComplete) {
+              onLessonComplete();
+            } else {
+              router.push('/dashboard');
+            }
+          }, 2000);
+        }
       } else {
         setOutput(`❌ ${result.tests_passed}/${result.tests_total} tests passed. Keep trying!`);
       }
@@ -94,8 +148,22 @@ export function CodeEditorPanel({ lesson }: CodeEditorPanelProps) {
   };
 
   return (
-    <div className="editor-panel">
-      {/* Editor Header */}
+    <>
+      {/* Fireworks Animation Overlay */}
+      {showFireworks && animationData && (
+        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
+          <div className="w-full h-full max-w-2xl max-h-2xl">
+            <Lottie
+              animationData={animationData}
+              loop={false}
+              autoplay={true}
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="editor-panel">
+        {/* Editor Header */}
       <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -104,23 +172,23 @@ export function CodeEditorPanel({ lesson }: CodeEditorPanelProps) {
           <span className="ml-2 text-xs text-white/50 font-mono">{lesson.title}.{getLanguage()}</span>
         </div>
         
-        {lesson.hints && lesson.hints.length > 0 && (
+        {parsedHints.length > 0 && (
           <button
             onClick={() => setShowHints(!showHints)}
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs text-[#f59e0b] hover:bg-[#f59e0b]/10 transition-colors"
           >
             <Lightbulb className="w-4 h-4" />
-            Hints ({lesson.hints.length})
+            Hints ({parsedHints.length})
           </button>
         )}
       </div>
 
       {/* Hints Panel */}
-      {showHints && lesson.hints && (
+      {showHints && parsedHints.length > 0 && (
         <div className="px-4 py-3 bg-[#f59e0b]/10 border-b border-[#f59e0b]/20">
           <h4 className="text-sm font-semibold text-[#f59e0b] mb-2">💡 Hints:</h4>
           <ul className="space-y-1">
-            {lesson.hints.map((hint, index) => (
+            {parsedHints.map((hint, index) => (
               <li key={index} className="text-xs text-white/70">
                 {index + 1}. {hint}
               </li>
@@ -165,7 +233,8 @@ export function CodeEditorPanel({ lesson }: CodeEditorPanelProps) {
         testResults={testResults}
         mode={mode}
       />
-    </div>
+      </div>
+    </>
   );
 }
 

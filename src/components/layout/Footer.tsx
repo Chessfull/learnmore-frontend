@@ -11,13 +11,13 @@ export function Footer() {
           <div className="flex items-center gap-3">
             <Image
               src="/images/logo/logo.png"
-              alt="LearnMore"
+              alt="Learn More"
               width={32}
               height={32}
               className="w-8 h-8"
             />
             <span className="text-white/50 text-sm">
-              © {new Date().getFullYear()} LearnMore. All rights reserved.
+              © {new Date().getFullYear()} Learn More. All rights reserved.
             </span>
           </div>
 

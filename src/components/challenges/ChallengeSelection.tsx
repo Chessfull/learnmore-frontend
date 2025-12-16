@@ -27,9 +27,13 @@ export function ChallengeSelection({ onSelect }: ChallengeSelectionProps) {
   const [selectedTechStack, setSelectedTechStack] = useState<TechStackName | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | null>(null);
 
-  const handleStart = () => {
-    if (selectedTechStack && selectedDifficulty) {
-      onSelect(selectedTechStack, selectedDifficulty);
+  const handleDifficultySelect = (difficulty: Difficulty) => {
+    setSelectedDifficulty(difficulty);
+    // Auto-start challenge when difficulty is selected
+    if (selectedTechStack) {
+      setTimeout(() => {
+        onSelect(selectedTechStack, difficulty);
+      }, 300); // Small delay for smooth UX
     }
   };
 
@@ -88,7 +92,7 @@ export function ChallengeSelection({ onSelect }: ChallengeSelectionProps) {
             {DIFFICULTIES.map((diff) => (
               <button
                 key={diff.value}
-                onClick={() => setSelectedDifficulty(diff.value)}
+                onClick={() => handleDifficultySelect(diff.value)}
                 className={`
                   relative p-6 rounded-2xl transition-all duration-300
                   ${selectedDifficulty === diff.value
@@ -105,7 +109,7 @@ export function ChallengeSelection({ onSelect }: ChallengeSelectionProps) {
                   <h3 className="text-2xl font-bold text-white mb-2">{diff.label}</h3>
                   <p className="text-white/70">{diff.xp}</p>
                   {selectedDifficulty === diff.value && (
-                    <div className="mt-3 text-2xl">✓</div>
+                    <div className="mt-3 text-2xl">🚀</div>
                   )}
                 </div>
               </button>
@@ -114,15 +118,7 @@ export function ChallengeSelection({ onSelect }: ChallengeSelectionProps) {
         </div>
       )}
 
-      {/* Start Button */}
-      {selectedTechStack && selectedDifficulty && (
-        <button
-          onClick={handleStart}
-          className="px-8 py-4 rounded-2xl bg-gradient-to-r from-[#00d4ff] to-[#8b5cf6] text-white font-bold text-xl hover:scale-105 transition-transform duration-300 shadow-[0_0_40px_rgba(0,212,255,0.4)] animate-fade-in"
-        >
-          Start Challenge! 🚀
-        </button>
-      )}
+      {/* Removed Start Button - Challenge starts automatically when difficulty is selected */}
 
       {/* Pilot Hands (Bottom Center) */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-64 h-64 pointer-events-none z-0">

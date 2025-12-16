@@ -17,6 +17,7 @@ export default function LandingPage() {
   useEffect(() => {
     // If user is already authenticated, skip video and redirect immediately
     if (!isLoading && isAuthenticated) {
+      setVideoEnded(true); // Skip video for authenticated users
       router.push('/dashboard');
     }
   }, [isAuthenticated, isLoading, router]);

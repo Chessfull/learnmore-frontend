@@ -213,11 +213,19 @@ export default function AdminPage() {
       console.error('Failed to parse challenge data:', e);
     }
 
+    // Convert options from object format to string array
+    let optionsArray = ['', '', '', ''];
+    if (Array.isArray(parsedOptions)) {
+      optionsArray = parsedOptions.map((opt: any) => 
+        typeof opt === 'string' ? opt : opt.text || ''
+      );
+    }
+
     setChallengeFormData({
       type: challenge.type,
       title: challenge.title,
       question: challenge.question,
-      options: Array.isArray(parsedOptions) ? parsedOptions : ['', '', '', ''],
+      options: optionsArray,
       correct_answer: challenge.correct_answer || '',
       starter_code: challenge.starter_code || '',
       test_cases: Array.isArray(parsedTestCases) && parsedTestCases.length > 0 
@@ -255,6 +263,36 @@ export default function AdminPage() {
       return;
     }
 
+    // Additional validation for QUIZ
+    if (challengeFormData.type === 'QUIZ') {
+      const validOptions = challengeFormData.options.filter(o => o.trim());
+      if (validOptions.length < 2) {
+        toast.error('Quiz must have at least 2 options');
+        return;
+      }
+      if (!challengeFormData.correct_answer) {
+        toast.error('Please select a correct answer');
+        return;
+      }
+    }
+
+    // Additional validation for CODE
+    if (challengeFormData.type === 'CODE') {
+      if (!challengeFormData.starter_code.trim()) {
+        toast.error('Starter code is required for code challenges');
+        return;
+      }
+      const validTestCases = challengeFormData.test_cases.filter(tc => tc.input || tc.expected_output);
+      if (validTestCases.length === 0) {
+        toast.error('At least one test case is required');
+        return;
+      }
+      if (!challengeFormData.solution.trim()) {
+        toast.error('Solution is required for code challenges');
+        return;
+      }
+    }
+
     try {
       const payload: any = {
         type: challengeFormData.type,
@@ -269,13 +307,30 @@ export default function AdminPage() {
       };
 
       if (challengeFormData.type === 'QUIZ') {
-        payload.options = JSON.stringify(challengeFormData.options.filter(o => o.trim()));
+        // Format options as array of objects with text and is_correct
+        const formattedOptions = challengeFormData.options
+          .filter(o => o.trim())
+          .map((option, index) => ({
+            text: option,
+            is_correct: String.fromCharCode(65 + index) === challengeFormData.correct_answer // A, B, C, D
+          }));
+        payload.options = JSON.stringify(formattedOptions);
         payload.correct_answer = challengeFormData.correct_answer;
+        // For QUIZ, set empty valid JSON for CODE fields
+        payload.test_cases = "[]";
+        payload.hints = "[]";
+        payload.starter_code = "";
+        payload.solution = "";
       } else {
         payload.starter_code = challengeFormData.starter_code;
-        payload.test_cases = JSON.stringify(challengeFormData.test_cases.filter(tc => tc.input || tc.expected_output));
-        payload.hints = JSON.stringify(challengeFormData.hints.filter(h => h.trim()));
+        const validTestCases = challengeFormData.test_cases.filter(tc => tc.input || tc.expected_output);
+        payload.test_cases = JSON.stringify(validTestCases);
+        const validHints = challengeFormData.hints.filter(h => h.trim());
+        payload.hints = validHints.length > 0 ? JSON.stringify(validHints) : "[]";
         payload.solution = challengeFormData.solution;
+        // For CODE, set empty valid JSON for QUIZ fields
+        payload.options = "[]";
+        payload.correct_answer = "";
       }
 
       if (editingChallenge) {
@@ -599,13 +654,17 @@ export default function AdminPage() {
                     <label className="block text-sm font-medium text-white/70 mb-2">
                       Correct Answer *
                     </label>
-                    <input
-                      type="text"
+                    <select
                       value={challengeFormData.correct_answer}
                       onChange={(e) => setChallengeFormData({ ...challengeFormData, correct_answer: e.target.value })}
-                      className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/30 focus:outline-none focus:border-[#fbbf24]"
-                      placeholder="Enter the exact correct answer"
-                    />
+                      className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-[#fbbf24]"
+                    >
+                      <option value="" className="bg-[#0a0f1c]">Select correct answer</option>
+                      <option value="A" className="bg-[#0a0f1c]">A</option>
+                      <option value="B" className="bg-[#0a0f1c]">B</option>
+                      <option value="C" className="bg-[#0a0f1c]">C</option>
+                      <option value="D" className="bg-[#0a0f1c]">D</option>
+                    </select>
                   </div>
                 </>
               )}

@@ -49,7 +49,7 @@ export function Navbar() {
               height={48}
               className="w-12 h-12"
             />
-            <span className="text-white font-semibold hidden sm:block">LearnMore</span>
+            <span className="text-white font-semibold hidden sm:block">Learn More</span>
           </Link>
 
           {/* Desktop Nav */}

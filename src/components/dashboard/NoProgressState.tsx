@@ -1,13 +1,13 @@
 'use client';
 
+import { RocketTransition, useRocketTransition } from '@/components/animations/RocketTransition';
 import { Button } from '@/components/ui/Button';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Rocket, Sparkles } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 
 export function NoProgressState() {
-  const router = useRouter();
+  const { isActive, launch, reset } = useRocketTransition();
 
   return (
     <GlassCard padding="none" glow="purple" className="relative overflow-hidden h-full">
@@ -86,7 +86,7 @@ export function NoProgressState() {
           <Button
             variant="primary"
             size="lg"
-            onClick={() => router.push('/courses')}
+            onClick={launch}
             leftIcon={<Rocket className="w-5 h-5" />}
             className="shadow-[0_0_30px_rgba(0,212,255,0.3)] hover:shadow-[0_0_40px_rgba(0,212,255,0.5)] transition-all"
           >
@@ -94,6 +94,13 @@ export function NoProgressState() {
           </Button>
         </div>
       </div>
+
+      {/* Rocket Transition Animation */}
+      <RocketTransition 
+        isActive={isActive} 
+        targetPath="/courses" 
+        onComplete={reset}
+      />
     </GlassCard>
   );
 }

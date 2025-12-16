@@ -109,13 +109,16 @@ export function LoginForm() {
           />
           <span className="text-sm text-white/70">Remember me</span>
         </label>
-        <button
-          type="button"
+        <a
+          href="#forgot-password"
           className="text-sm text-[#00d4ff] hover:text-[#00d4ff]/80 transition-colors"
-          disabled={isLoading}
+          onClick={(e) => {
+            e.preventDefault();
+            window.dispatchEvent(new CustomEvent('show-forgot-password'));
+          }}
         >
           Forgot password?
-        </button>
+        </a>
       </div>
 
       {/* Submit Button */}

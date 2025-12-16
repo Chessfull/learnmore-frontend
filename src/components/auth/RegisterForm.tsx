@@ -7,11 +7,13 @@ import { Lock, Mail, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { OAuthButtons } from './OAuthButtons';
+import { TermsModal } from './TermsModal';
 
 export function RegisterForm() {
   const router = useRouter();
   const { register, clearError } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     displayName: '',
     email: '',
@@ -158,15 +160,25 @@ export function RegisterForm() {
           />
           <span className="text-sm text-white/70">
             I agree to the{' '}
-            <a href="#" className="text-[#00d4ff] hover:text-[#00d4ff]/80">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                setIsTermsModalOpen(true);
+              }}
+              className="text-[#00d4ff] hover:text-[#00d4ff]/80 underline transition-colors"
+            >
               Terms and Conditions
-            </a>
+            </button>
           </span>
         </label>
         {errors.acceptTerms && (
           <p className="mt-1.5 text-sm text-red-500">{errors.acceptTerms}</p>
         )}
       </div>
+
+      {/* Terms Modal */}
+      <TermsModal isOpen={isTermsModalOpen} onClose={() => setIsTermsModalOpen(false)} />
 
       {/* Submit Button */}
       <Button type="submit" variant="primary" className="w-full" isLoading={isLoading}>

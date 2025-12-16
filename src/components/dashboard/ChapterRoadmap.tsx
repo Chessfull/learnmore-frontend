@@ -2,7 +2,7 @@
 
 import { GlassCard } from '@/components/ui/GlassCard';
 import api from '@/lib/api';
-import { Check, ChevronLeft, ChevronRight, Lock } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -127,10 +127,10 @@ export function ChapterRoadmap() {
     }
   };
 
-  const getChapterStatus = (chapter: Chapter, currentChapterId: string): 'completed' | 'current' | 'locked' => {
+  const getChapterStatus = (chapter: Chapter, currentChapterId: string): 'completed' | 'current' | 'available' => {
     if (chapter.chapter_id === currentChapterId) return 'current';
     if (chapter.completed_lessons === chapter.total_lessons && chapter.total_lessons > 0) return 'completed';
-    return 'locked';
+    return 'available'; // All chapters are available (no lock system)
   };
 
   const getPlanetImage = (techStack: string): string => {
@@ -197,15 +197,15 @@ export function ChapterRoadmap() {
 
   return (
     <GlassCard padding="none" glow="purple" className="w-full h-full flex flex-col relative overflow-hidden">
-      {/* Giant Background Planet */}
-      <div className="absolute right-[-10%] top-[-10%] w-[500px] h-[500px] opacity-20 pointer-events-none z-0">
+      {/* Giant Background Planet - Moved to upper right, static, less opacity */}
+      <div className="absolute right-[5%] top-[8%] w-[280px] h-[280px] md:w-[350px] md:h-[350px] lg:w-[400px] lg:h-[400px] opacity-15 pointer-events-none z-0">
         <Image
           src={planetImage}
           alt="Background planet"
           fill
-          sizes="500px"
-          className="object-contain animate-[spin_30s_linear_infinite]"
-          style={{ filter: `drop-shadow(0 0 80px ${planetTheme.glow})` }}
+          sizes="400px"
+          className="object-contain"
+          style={{ filter: `drop-shadow(0 0 60px ${planetTheme.glow})` }}
         />
       </div>
 
@@ -317,7 +317,7 @@ export function ChapterRoadmap() {
               const status = getChapterStatus(chapter, roadmapData.current_chapter_id);
               const isCurrent = status === 'current';
               const isCompleted = status === 'completed';
-              const isLocked = status === 'locked';
+              const isAvailable = status === 'available';
               const progress = chapter.total_lessons > 0 
                 ? Math.round((chapter.completed_lessons / chapter.total_lessons) * 100) 
                 : 0;
@@ -327,46 +327,78 @@ export function ChapterRoadmap() {
                   {/* Chapter Node */}
                   <div
                     data-chapter-id={chapter.chapter_id}
-                    onClick={() => !isLocked && handleChapterClick(chapter)}
+                    onClick={() => handleChapterClick(chapter)}
                     className={`
                       relative flex flex-col items-center gap-3 cursor-pointer transition-all duration-300
                       ${isCurrent ? 'scale-110' : 'scale-100 hover:scale-105'}
-                      ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}
                     `}
                   >
-                    {/* Chapter Circle */}
+                    {/* Chapter Circle - Planet Texture */}
                     <div
                       className={`
-                        relative w-24 h-24 rounded-full flex items-center justify-center
-                        transition-all duration-300
+                        relative w-24 h-24 rounded-full flex items-center justify-center overflow-hidden
+                        transition-all duration-300 border-2
                         ${isCurrent 
-                          ? `border-4` 
+                          ? `border-4 shadow-[0_0_40px]` 
                           : isCompleted
-                          ? 'bg-linear-to-br from-green-500 to-emerald-600 shadow-[0_0_30px_rgba(34,197,94,0.4)] border-2 border-green-400'
-                          : 'bg-linear-to-br from-gray-700 to-gray-800 border-2 border-gray-600'
+                          ? 'shadow-[0_0_30px_rgba(34,197,94,0.4)] border-green-400'
+                          : 'border-white/20 hover:border-white/40'
                         }
                       `}
                       style={isCurrent ? {
-                        background: `linear-gradient(135deg, ${planetTheme.primary}, ${planetTheme.secondary})`,
                         borderColor: planetTheme.primary,
                         boxShadow: `0 0 40px ${planetTheme.glow}`
                       } : {}}
                     >
+                      {/* Planet Texture Background */}
+                      <div className="absolute inset-0">
+                        <Image
+                          src="/images/dashboard-planet-circle.png"
+                          alt="Planet texture"
+                          fill
+                          sizes="96px"
+                          className={`object-cover ${isCompleted ? 'brightness-125 saturate-150' : isAvailable ? 'brightness-90' : ''}`}
+                        />
+                        {/* Gradient Overlay */}
+                        <div 
+                          className="absolute inset-0"
+                          style={{
+                            background: isCurrent 
+                              ? `radial-gradient(circle at center, ${planetTheme.primary}40, ${planetTheme.secondary}60)`
+                              : isCompleted
+                              ? 'radial-gradient(circle at center, rgba(34, 197, 94, 0.4), rgba(16, 185, 129, 0.6))'
+                              : 'radial-gradient(circle at center, rgba(100, 116, 139, 0.5), rgba(71, 85, 105, 0.7))'
+                          }}
+                        />
+                      </div>
+
                       {/* Icon */}
-                      {isCompleted ? (
-                        <Check className="w-10 h-10 text-white" strokeWidth={3} />
-                      ) : isLocked ? (
-                        <Lock className="w-8 h-8 text-gray-400" />
-                      ) : (
-                        <span className="text-2xl font-bold text-white">{index + 1}</span>
-                      )}
+                      <div className="relative z-10">
+                        {isCompleted ? (
+                          <Check className="w-10 h-10 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" strokeWidth={3} />
+                        ) : (
+                          <span className="text-2xl font-bold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">{index + 1}</span>
+                        )}
+                      </div>
 
                       {/* Pulsing ring for current */}
                       {isCurrent && (
-                        <div 
-                          className="absolute inset-0 rounded-full border-4 animate-ping opacity-75"
-                          style={{ borderColor: planetTheme.primary }}
-                        />
+                        <>
+                          <div 
+                            className="absolute inset-0 rounded-full border-4 animate-pulse"
+                            style={{ 
+                              borderColor: planetTheme.primary,
+                              boxShadow: `0 0 20px ${planetTheme.glow}`
+                            }}
+                          />
+                          <div 
+                            className="absolute inset-[-8px] rounded-full border-2 opacity-60"
+                            style={{ 
+                              borderColor: planetTheme.primary,
+                              animation: 'pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                            }}
+                          />
+                        </>
                       )}
                     </div>
 
@@ -433,6 +465,21 @@ export function ChapterRoadmap() {
         @keyframes twinkle {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.3; }
+        }
+
+        @keyframes pulse-ring {
+          0% {
+            transform: scale(1);
+            opacity: 0.8;
+          }
+          50% {
+            transform: scale(1.15);
+            opacity: 0.4;
+          }
+          100% {
+            transform: scale(1);
+            opacity: 0.8;
+          }
         }
 
         .scrollbar-hide::-webkit-scrollbar {

@@ -84,12 +84,12 @@ export function TopThreePodium() {
                 <Image
                   src={second.avatar}
                   alt={second.display_name}
-                  width={80}
-                  height={80}
+                  width={96}
+                  height={96}
                   className="podium-avatar"
                 />
               ) : (
-                <div className="podium-avatar bg-[#c0c0c0]/20 flex items-center justify-center text-2xl font-bold">
+                <div className="podium-avatar bg-[#c0c0c0]/20 flex items-center justify-center text-3xl font-bold">
                   {second.display_name.charAt(0).toUpperCase()}
                 </div>
               )}
@@ -111,12 +111,12 @@ export function TopThreePodium() {
                 <Image
                   src={first.avatar}
                   alt={first.display_name}
-                  width={100}
-                  height={100}
+                  width={112}
+                  height={112}
                   className="podium-avatar"
                 />
               ) : (
-                <div className="podium-avatar bg-[#ffd700]/20 flex items-center justify-center text-3xl font-bold">
+                <div className="podium-avatar bg-[#ffd700]/20 flex items-center justify-center text-4xl font-bold">
                   {first.display_name.charAt(0).toUpperCase()}
                 </div>
               )}
@@ -138,12 +138,12 @@ export function TopThreePodium() {
                 <Image
                   src={third.avatar}
                   alt={third.display_name}
-                  width={80}
-                  height={80}
+                  width={96}
+                  height={96}
                   className="podium-avatar"
                 />
               ) : (
-                <div className="podium-avatar bg-[#cd7f32]/20 flex items-center justify-center text-2xl font-bold">
+                <div className="podium-avatar bg-[#cd7f32]/20 flex items-center justify-center text-3xl font-bold">
                   {third.display_name.charAt(0).toUpperCase()}
                 </div>
               )}

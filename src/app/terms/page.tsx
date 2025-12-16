@@ -18,7 +18,7 @@ export default function TermsPage() {
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
             <Image
               src="/images/logo/logo.png"
-              alt="LearnMore"
+              alt="Learn More"
               width={64}
               height={64}
             />
@@ -33,7 +33,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-bold text-white mb-3">1. Acceptance of Terms</h2>
             <p className="text-white/70">
-              By accessing and using LearnMore, you accept and agree to be bound by the terms and 
+              By accessing and using Learn More, you accept and agree to be bound by the terms and 
               provisions of this agreement. If you do not agree to these terms, please do not use our service.
             </p>
           </section>
@@ -41,7 +41,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-bold text-white mb-3">2. Use License</h2>
             <p className="text-white/70 mb-3">
-              We grant you a personal, non-exclusive, non-transferable license to use LearnMore for 
+              We grant you a personal, non-exclusive, non-transferable license to use Learn More for 
               educational purposes, subject to these terms:
             </p>
             <ul className="list-disc list-inside text-white/70 space-y-2 ml-4">
@@ -87,7 +87,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-bold text-white mb-3">6. Limitation of Liability</h2>
             <p className="text-white/70">
-              LearnMore is provided &apos;as is&apos; without warranties of any kind. We shall not be liable for 
+              Learn More is provided &apos;as is&apos; without warranties of any kind. We shall not be liable for 
               any damages arising from the use or inability to use our service.
             </p>
           </section>

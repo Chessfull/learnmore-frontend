@@ -25,7 +25,7 @@ export default function AboutPage() {
             />
           </Link>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            About LearnMore
+            About Learn More
           </h1>
           <p className="text-xl text-white/70">
             Your journey to mastering programming in space
@@ -41,7 +41,7 @@ export default function AboutPage() {
             <div>
               <h2 className="text-2xl font-bold text-white mb-3">Our Mission</h2>
               <p className="text-white/70 leading-relaxed">
-                LearnMore is dedicated to making programming education accessible, engaging, and fun for everyone. 
+                Learn More is dedicated to making programming education accessible, engaging, and fun for everyone. 
                 Through our immersive space-themed platform, we transform the learning experience into an exciting 
                 adventure where every line of code takes you closer to mastering your chosen technology.
               </p>

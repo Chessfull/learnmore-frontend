@@ -30,8 +30,16 @@ export default function ChallengesPage() {
   const [step, setStep] = useState<ChallengeStep>('selection');
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedTechStack, setSelectedTechStack] = useState<TechStackName | null>(null);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null);
 
   const handleSelection = async (techStack: TechStackName, difficulty: string) => {
+    setSelectedTechStack(techStack);
+    setSelectedDifficulty(difficulty);
+    await fetchRandomChallenge(techStack, difficulty);
+  };
+
+  const fetchRandomChallenge = async (techStack: TechStackName, difficulty: string) => {
     setIsLoading(true);
     try {
       const response = await api.post('/challenges/random', {
@@ -50,9 +58,14 @@ export default function ChallengesPage() {
     }
   };
 
-  const handleComplete = () => {
-    setStep('selection');
-    setChallenge(null);
+  const handleComplete = async () => {
+    // Auto-load next challenge with same criteria
+    if (selectedTechStack && selectedDifficulty) {
+      await fetchRandomChallenge(selectedTechStack, selectedDifficulty);
+    } else {
+      setStep('selection');
+      setChallenge(null);
+    }
   };
 
   if (isLoading) {

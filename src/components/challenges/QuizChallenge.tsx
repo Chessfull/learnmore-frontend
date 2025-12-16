@@ -2,7 +2,7 @@
 
 import api from '@/lib/api';
 import { CheckCircle, Timer, XCircle } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
 interface QuizOption {
@@ -21,28 +21,27 @@ export function QuizChallenge({ challenge, onComplete }: QuizChallengeProps) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [startTime] = useState(Date.now());
+  const isSubmittingRef = useRef(false); // Prevent double submission
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const options: QuizOption[] = challenge.options ? JSON.parse(challenge.options) : [];
   const optionLabels = ['A', 'B', 'C', 'D'];
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1 && !isSubmitted) {
-          handleSubmit(true); // Auto-submit when time's up
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [isSubmitted]);
-
-  const handleSubmit = async (isTimeout = false) => {
-    if (isSubmitted) return;
+  const handleSubmit = useCallback(async (isTimeout = false) => {
+    // Prevent double submission
+    if (isSubmittingRef.current) {
+      return;
+    }
     
+    isSubmittingRef.current = true;
     setIsSubmitted(true);
+    
+    // Clear timer if still running
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    
     const timeTaken = Math.floor((Date.now() - startTime) / 1000);
 
     try {
@@ -60,10 +59,57 @@ export function QuizChallenge({ challenge, onComplete }: QuizChallengeProps) {
       } else {
         toast.error(`Wrong answer! +${resultData.xp_earned} XP for trying!`);
       }
-    } catch (error) {
-      toast.error('Failed to submit answer');
+    } catch (error: any) {
+      console.error('Submit error:', error.response?.data || error);
+      const errorMsg = error.response?.data?.error?.message || 'Failed to submit answer';
+      toast.error(errorMsg);
+      
+      // Only allow retry if it wasn't a timeout auto-submit
+      if (!isTimeout) {
+        setIsSubmitted(false);
+        isSubmittingRef.current = false;
+      }
     }
-  };
+  }, [challenge.id, selectedOption, startTime]);
+
+  useEffect(() => {
+    if (isSubmitted || timeLeft <= 0) return; // Don't run timer if already submitted or time is up
+
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        const newTime = prev - 1;
+        
+        // When time reaches 0, clear timer and submit
+        if (newTime <= 0) {
+          if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+          }
+          
+          // Auto-submit when time's up - only once
+          if (!isSubmittingRef.current) {
+            // Use setTimeout to ensure state update completes first
+            setTimeout(() => {
+              if (!isSubmittingRef.current) {
+                handleSubmit(true);
+              }
+            }, 0);
+          }
+          
+          return 0;
+        }
+        
+        return newTime;
+      });
+    }, 1000);
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [isSubmitted, handleSubmit, timeLeft]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
